@@ -14,6 +14,12 @@ class BaseModuleService:
     STATUS_ORDER: list[str] = []
     ACTION_RULES: dict[str, str] = {}
     NEGATIVE_ACTIONS: list[str] = []
+    # 跨模块特性可能追加的扩展字段（例如授权下发的样本范围、单次检索报价）。
+    # 通用登记接口默认只落 LIST_FIELDS，这里白名单放行这些额外键，避免被静默丢弃。
+    EXTRA_PERSISTED_FIELDS: tuple[str, ...] = (
+        "授权样本范围", "获准样本范围", "样本范围",
+        "单次检索Epsilon", "search_cost_epsilon",
+    )
 
     def list_entries(
         self,
@@ -53,6 +59,9 @@ class BaseModuleService:
         rows = store.rows(self.MODULE)
         entry = {"id": max((int(row.get("id", 0)) for row in rows), default=0) + 1}
         entry.update({field: values.get(field) for field in self.LIST_FIELDS})
+        for field in self.EXTRA_PERSISTED_FIELDS:
+            if values.get(field) not in (None, ""):
+                entry[field] = values.get(field)
         entry["status"] = self.STATUS_ORDER[0]
         entry["pending"] = True
         entry["abnormal"] = False

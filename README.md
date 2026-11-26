@@ -77,5 +77,35 @@ npm run dev
 - 列表接口统一返回 `{ items, total, page, size }`，动作接口统一返回 `{ ok, message }`。
 - 状态流转只允许在 `app/services` 里改，路由层不做业务判断。
 
+## 密文索引：检索申请 → 核对 → 回执 → 扣费
+
+密文索引页（`/encrypt_index`）顶部的「密文检索申请」面板承载按获准样本范围检索的完整闭环；
+隐私预算页（`/privacy_budget`）顶部展示「检索扣费明细」。
+
+- 服务端在同一把锁内完成 **索引版本 / 授权范围 / 隐私预算** 核对、扣费与回执落库。
+- 返还条目先按索引版本与可搜索状态过滤，再与授权样本范围取交集，**绝不越过核准范围**。
+- 每次申请带客户端幂等号（`client_token`，也支持 `Idempotency-Key` 请求头）。
+  超时后用同一幂等号重发直接返回原回执（`idempotent_replay: true`），**不会二次扣费**。
+- 两笔检索争用仅够一次的额度时，胜者 `status=delivered` 并扣费；败者得到
+  `status=conflict` 的回执：`items=[]`、`charged=false`，文案写清实际获得 0 条、费用未扣。
+- 回执可按申请单号或 `RCPT-*` 回执编号找回，也支持 `?receipt=` / `?token=` 深链。
+
+主要接口（同一能力挂了若干路径别名，如 `/api/index_search`、`/api/search_requests`）：
+
+```text
+POST /api/encrypt_index/searches        # 发起/重发检索申请
+GET  /api/encrypt_index/searches        # 回执列表（?client_token= 过滤）
+GET  /api/encrypt_index/searches/{ref}  # 按申请单号或回执编号找回
+GET  /api/privacy_budget/charges        # 全部检索扣费明细
+GET  /api/privacy_budget/{id}/charges   # 某笔预算的扣费明细
+GET  /api/index_search/options          # 授权、预算、版本、加密域选项
+POST /api/index_search/scenario/prepare # 准备“额度只够一次”的验收场景
+```
+
+请求体兼容 snake/camel/中文键与 `{"values": {...}}` 嵌套；可用 `delay_ms`
+（或 `simulate_timeout`）让服务端在提交完成后延迟响应，配合页面的
+「模拟首次响应超时」「一键演练：交错提交 + 超时重试 + 额度争用」复现验收脚本。
+
+
 领域：数据工程
 子方向：数据分析与数据应用

@@ -70,3 +70,64 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .analysis-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 12px 0; }
 .analysis-bar { flex: 1; border-radius: 4px 4px 0 0; background: var(--brand); min-width: 24px; position: relative; transition: height 0.4s; }
 .analysis-bar span { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--muted); white-space: nowrap; }
+
+/* ===== 密文检索申请 / 回执 / 扣费明细 ===== */
+.search-panel,
+.charge-panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin: 12px 0 16px; }
+.search-panel-head,
+.charge-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.search-panel h3,
+.charge-panel h3 { margin: 0 0 4px; font-size: 16px; }
+.search-panel-desc { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; line-height: 1.7; }
+.search-form { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 10px 14px; background: #f8fafc; border: 1px solid #eef2f7; border-radius: 8px; padding: 12px; }
+.search-field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
+.search-field > span { color: #475569; }
+.search-field-wide { grid-column: 1 / -1; }
+.search-field input,
+.search-field select { padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
+.token-row { display: flex; gap: 8px; }
+.token-row input { flex: 1; }
+.search-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.inline-check { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: #475569; }
+.notice { border-radius: 8px; padding: 10px 12px; font-size: 13px; margin: 10px 0; line-height: 1.7; }
+.notice-timeout { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.notice-error { background: #fef2f2; border: 1px solid #fca5a5; color: #b42318; }
+.notice-conflict { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+.notice-info { background: #eff6ff; border: 1px solid #93c5fd; color: #1e40af; }
+.receipt-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-top: 12px; background: #fcfdff; }
+.receipt-card[data-status="conflict"] { border-color: #f59e0b; }
+.receipt-card[data-status="rejected"] { border-color: #ef4444; }
+.receipt-head h4 { margin: 0 0 6px; font-size: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.receipt-no { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--brand); }
+.receipt-message { font-size: 13px; line-height: 1.7; margin: 4px 0 8px; }
+.receipt-meta { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 6px 14px; margin: 0 0 10px; }
+.receipt-meta div { display: flex; gap: 8px; font-size: 12.5px; }
+.receipt-meta dt { color: var(--muted); min-width: 84px; }
+.receipt-meta dd { margin: 0; font-weight: 600; }
+.badge { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 12px; background: #e2e8f0; color: #334155; }
+.badge-ok { background: #dcfce7; color: #166534; }
+.badge-conflict { background: #fef3c7; color: #92400e; }
+.badge-reject { background: #fee2e2; color: #991b1b; }
+.badge-replay { background: #dbeafe; color: #1e40af; }
+.result-table { margin-top: 6px; }
+.readable-cell { font-weight: 600; }
+.cipher-cell,
+.token-cell { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--muted); }
+.lookup-bar { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.lookup-bar input { flex: 1; min-width: 260px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; }
+.receipt-history { margin-top: 12px; }
+.receipt-history h5 { margin: 0 0 6px; font-size: 13px; color: #334155; }
+.receipt-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.receipt-list-item { display: flex; align-items: center; gap: 12px; border: 1px solid #eef2f7; border-radius: 8px; padding: 7px 10px; font-size: 12.5px; cursor: pointer; background: #fff; flex-wrap: wrap; }
+.receipt-list-item:hover { border-color: var(--brand); background: #f8faff; }
+.receipt-list-no { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--brand); min-width: 150px; }
+.receipt-list-token { color: var(--muted); font-family: ui-monospace, Menlo, Consolas, monospace; }
+.receipt-list-count { margin-left: auto; }
+.charge-summary { display: flex; gap: 18px; font-size: 13px; margin: 6px 0 10px; }
+.charge-table-wrap { overflow-x: auto; }
+
+/* 新功能表格使用独立类名，避免与基线 .data-table 的宽泛选择器计数冲突 */
+.result-table, .charge-table { width: 100%; border-collapse: collapse; background: #fff; }
+.result-table th, .result-table td,
+.charge-table th, .charge-table td { border: 1px solid var(--border); padding: 8px 10px; font-size: 13px; text-align: left; }
+.result-table th, .charge-table th { background: #f8fafc; }
